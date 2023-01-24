@@ -93,6 +93,7 @@ function HomePage() {
               <EmailCard
                 email={email}
                 key={email.id}
+                activeEmail={activeEmail}
                 clickHandler={() => setActiveEmail(email)}
               />
             ))}

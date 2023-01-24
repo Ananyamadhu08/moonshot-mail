@@ -2,7 +2,7 @@ import { useState } from "react";
 import Avatar from "./Avatar";
 import { formatDate } from "../utils";
 
-function EmailCard({ email, clickHandler }) {
+function EmailCard({ email, clickHandler, activeEmail }) {
   const [isRead, setIsRead] = useState(false);
 
   return (
@@ -28,7 +28,11 @@ function EmailCard({ email, clickHandler }) {
           Subject: <b>{email.subject}</b>
         </p>
         <div>
-          <p className="email-card-description email-card-text">
+          <p
+            className={`email-card-text ${
+              activeEmail && "email-card-description"
+            }`}
+          >
             {email.short_description}
           </p>
         </div>
