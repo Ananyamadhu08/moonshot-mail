@@ -1,13 +1,17 @@
 import { useState } from "react";
 import Avatar from "./Avatar";
+import { formatDate } from "../utils";
 
-function EmailCard({ email, formatDate }) {
+function EmailCard({ email, clickHandler }) {
   const [isRead, setIsRead] = useState(false);
 
   return (
     <div
       className={`email-card ${isRead ? "read-email" : "unread-email"}`}
-      onClick={() => setIsRead(true)}
+      onClick={() => {
+        setIsRead(true);
+        clickHandler();
+      }}
     >
       <div className="avatar-container">
         <Avatar name={email.from.name} />
