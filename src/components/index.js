@@ -1,5 +1,6 @@
 import FilterBar from "./FilterBar";
 import EmailCard from "./EmailCard";
-import MainEmailSection from "./MainEmailSection";
+import EmailBody from "./EmailBody";
+import Pagination from "./Pagination";
 
-export { FilterBar, EmailCard, MainEmailSection };
+export { FilterBar, EmailCard, EmailBody, Pagination };

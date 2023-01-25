@@ -1,0 +1,59 @@
+.unreadEmail {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 0.4rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  background-color: var(--white);
+}
+
+.readEmail {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: 0.4rem;
+  margin-bottom: 1rem;
+  width: 100%;
+  background-color: var(--read-background-color);
+}
+
+.avatarContainer {
+  padding: 1rem;
+}
+
+.emailSummary {
+  text-align: left;
+}
+
+.emailCardText {
+  font-size: 0.8rem;
+  color: var(--text-color);
+  margin-bottom: 0;
+  line-height: 0.5rem;
+}
+
+.emailCardDescription {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  max-width: 15rem;
+  min-height: 0.8rem;
+  white-space: nowrap;
+  box-sizing: border-box;
+  width: 100%;
+  font-size: 0.8rem;
+  color: var(--text-color);
+  margin-bottom: 0;
+  line-height: 0.5rem;
+}
+
+.emailCardFooter {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.75rem;
+  color: var(--text-color);
+  align-items: center;
+}
+
+.favoriteTag {
+  color: var(--pink);
+  font-weight: bold;
+}
