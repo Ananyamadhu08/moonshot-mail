@@ -1,3 +1,3 @@
 # moonshot-mail
 
-A Wordle clone using HTML, CSS and JavaScript
+An email application using react and redux
