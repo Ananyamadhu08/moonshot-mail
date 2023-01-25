@@ -1,0 +1,18 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.homePageContainer {
+  margin: 1rem 4rem 1rem 4rem;
+}
+
+.homePageWithEmailBody {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.emailContainer {
+  min-width: 35%;
+}

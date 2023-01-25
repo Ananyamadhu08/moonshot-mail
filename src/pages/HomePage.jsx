@@ -1,108 +1,98 @@
-import { useState } from "react";
-import { FilterBar, EmailCard, MainEmailSection } from "../components";
-function HomePage() {
-  const [activeEmail, setActiveEmail] = useState(null);
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { FilterBar, EmailCard, EmailBody, Pagination } from "../components";
+import { getEmails } from "../features/actions/emailActions";
+import { updateFilterAndReadIdsFromLocalStorge } from "../features/slices/emailSlice";
+import { filterEmails } from "../utils";
+import styles from "./HomePage.module.css";
 
-  const emails = [
-    {
-      id: "1",
-      from: { email: "bounced@flipkart.com", name: "bounced" },
-      date: 1582729505000,
-      subject: "Lorem Ipsum",
-      short_description:
-        "Vestibulum sit amet ipsum aliquet, lacinia nulla malesuada, ullamcorper massa",
-    },
-    {
-      id: "2",
-      from: { email: "noreply@flipkart.com", name: "noreply" },
-      date: 1582728505000,
-      subject: "Lorem Ipsum",
-      short_description:
-        "Aenean ut odio eu risus sollicitudin vehicula volutpat vel ante",
-    },
-    {
-      id: "3",
-      from: { email: "yourfriends@flipkart.com", name: "yourfriends" },
-      date: 1582727505000,
-      subject: "Lorem Ipsum",
-      short_description:
-        "Nam eget erat accumsan, auctor sapien ut, tempor diam",
-    },
-    {
-      id: "4",
-      from: { email: "hello@flipkart.com", name: "hello" },
-      date: 1582726505000,
-      subject: "Lorem Ipsum",
-      short_description: "Morbi eget nunc interdum felis varius tincidunt",
-    },
-    {
-      id: "5",
-      from: { email: "howdy@flipkart.com", name: "howdy" },
-      date: 1582725505000,
-      subject: "Lorem Ipsum",
-      short_description:
-        "Integer consequat dolor sed justo consequat, id elementum eros facilisis",
-    },
-    {
-      id: "6",
-      from: { email: "media@flipkart.com", name: "media" },
-      date: 1582724505000,
-      subject: "Lorem Ipsum",
-      short_description:
-        "Pellentesque sed erat pulvinar, ornare elit at, elementum tortor",
-    },
-    {
-      id: "7",
-      from: { email: "press@flipkart.com", name: "press" },
-      date: 1582724481000,
-      subject: "Lorem Ipsum",
-      short_description: "Phasellus sagittis metus in gravida posuere",
-    },
-    {
-      id: "8",
-      from: { email: "affiliates@flipkart.com", name: "affiliates" },
-      date: 1582724433000,
-      subject: "Lorem Ipsum",
-      short_description: "Nunc tincidunt metus vel enim tempus ultricies",
-    },
-    {
-      id: "9",
-      from: { email: "partners@flipkart.com", name: "partners" },
-      date: 1582724402000,
-      subject: "Lorem Ipsum",
-      short_description:
-        "Vestibulum viverra dui finibus, rutrum dui luctus, hendrerit odio",
-    },
-    {
-      id: "10",
-      from: { email: "domains@flipkart.com", name: "domains" },
-      date: 1582724402000,
-      subject: "Lorem Ipsum",
-      short_description: "Sed vitae est id orci viverra gravida ut at turpis",
-    },
-  ];
+function HomePage() {
+  const { emails } = useSelector((state) => state);
+
+  const dispatch = useDispatch();
+
+  const [activeEmailId, setActiveEmailId] = useState(null);
+  const [emailBodyData, setEmailBodyData] = useState(null);
+  const [page, setPage] = useState(1);
+
+  useEffect(() => {
+    if (
+      JSON.parse(localStorage.getItem("readEmailIds")) &&
+      JSON.parse(localStorage.getItem("favoriteEmailIds"))
+    ) {
+      dispatch(
+        updateFilterAndReadIdsFromLocalStorge({
+          readEmailIds: JSON.parse(localStorage.getItem("readEmailIds")),
+          favoriteEmailIds: JSON.parse(
+            localStorage.getItem("favoriteEmailIds")
+          ),
+        })
+      );
+    }
+  }, [dispatch]);
+
+  useEffect(() => {
+    setEmailBodyData(null);
+    setActiveEmailId(null);
+    dispatch(getEmails({ page }));
+  }, [dispatch, page]);
+
+  useEffect(() => {
+    setEmailBodyData(null);
+    setActiveEmailId(null);
+  }, [emails.filterType]);
+
+  const getEmailBody = async (id) => {
+    if (id) {
+      const response = await fetch(
+        `https://flipkart-email-mock.now.sh/?id=${id}`
+      );
+
+      if (response.ok) {
+        let json = await response.json();
+
+        setEmailBodyData(json);
+      }
+    }
+  };
+
+  useEffect(() => {
+    getEmailBody(activeEmailId);
+  }, [activeEmailId]);
+
+  const filteredEmails =
+    emails.allEmails && filterEmails(emails.allEmails, emails);
 
   return (
-    <div className="App">
-      <section className="home-page-container">
+    <section className={styles.homePageContainer}>
+      <div className={styles.header}>
         <FilterBar />
 
-        <div className={activeEmail && "main-section-with-email-body"}>
-          <div className="email-container">
-            {emails.map((email) => (
+        <Pagination page={page} setPage={setPage} />
+      </div>
+
+      <div className={activeEmailId && styles.homePageWithEmailBody}>
+        <div className={styles.emailContainer}>
+          {!emails.loading &&
+            filteredEmails?.map((email) => (
               <EmailCard
-                email={email}
                 key={email.id}
-                activeEmail={activeEmail}
-                clickHandler={() => setActiveEmail(email)}
+                email={email}
+                setActiveEmailId={setActiveEmailId}
+                activeEmailId={activeEmailId}
               />
             ))}
-          </div>
 
-          {activeEmail !== null && <MainEmailSection email={emails[0]} />}
+          {emails.loading && <p> loading... </p>}
+
+          {!emails.loading && filteredEmails.length === 0 && <p> No emails </p>}
         </div>
-      </section>
-    </div>
+
+        {activeEmailId !== null && emailBodyData !== null && (
+          <EmailBody data={emailBodyData} />
+        )}
+      </div>
+    </section>
   );
 }
 
